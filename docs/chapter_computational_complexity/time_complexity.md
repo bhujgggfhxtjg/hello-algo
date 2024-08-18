@@ -1078,22 +1078,43 @@ $$
 
 在以下函数中，尽管操作数量 `size` 可能很大，但由于其与输入数据大小 $n$ 无关，因此时间复杂度仍为 $O(1)$ ：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{constant}
+```cpp
+/* 常数阶 */
+int constant(int n) {
+    int count = 0;
+    int size = 100000;
+    for (int i = 0; i < size; i++)
+        count++;
+    return count;
+}
 ```
 
 ### 线性阶 $O(n)$
 
 线性阶的操作数量相对于输入数据大小 $n$ 以线性级别增长。线性阶通常出现在单层循环中：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{linear}
+```cpp
+/* 线性阶 */
+int linear(int n) {
+    int count = 0;
+    for (int i = 0; i < n; i++)
+        count++;
+    return count;
+}
 ```
 
 遍历数组和遍历链表等操作的时间复杂度均为 $O(n)$ ，其中 $n$ 为数组或链表的长度：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{array_traversal}
+```cpp
+/* 线性阶（遍历数组） */
+int arrayTraversal(vector<int> &nums) {
+    int count = 0;
+    // 循环次数与数组长度成正比
+    for (int num : nums) {
+        count++;
+    }
+    return count;
+}
 ```
 
 值得注意的是，**输入数据大小 $n$ 需根据输入数据的类型来具体确定**。比如在第一个示例中，变量 $n$ 为输入数据大小；在第二个示例中，数组长度 $n$ 为数据大小。
@@ -1102,8 +1123,18 @@ $$
 
 平方阶的操作数量相对于输入数据大小 $n$ 以平方级别增长。平方阶通常出现在嵌套循环中，外层循环和内层循环的时间复杂度都为 $O(n)$ ，因此总体的时间复杂度为 $O(n^2)$ ：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{quadratic}
+```cpp
+/* 平方阶 */
+int quadratic(int n) {
+    int count = 0;
+    // 循环次数与数据大小 n 成平方关系
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            count++;
+        }
+    }
+    return count;
+}
 ```
 
 下图对比了常数阶、线性阶和平方阶三种时间复杂度。
@@ -1112,8 +1143,25 @@ $$
 
 以冒泡排序为例，外层循环执行 $n - 1$ 次，内层循环执行 $n-1$、$n-2$、$\dots$、$2$、$1$ 次，平均为 $n / 2$ 次，因此时间复杂度为 $O((n - 1) n / 2) = O(n^2)$ ：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{bubble_sort}
+```cpp
+/* 平方阶（冒泡排序） */
+int bubbleSort(vector<int> &nums) {
+    int count = 0; // 计数器
+    // 外循环：未排序区间为 [0, i]
+    for (int i = nums.size() - 1; i > 0; i--) {
+        // 内循环：将未排序区间 [0, i] 中的最大元素交换至该区间的最右端
+        for (int j = 0; j < i; j++) {
+            if (nums[j] > nums[j + 1]) {
+                // 交换 nums[j] 与 nums[j + 1]
+                int tmp = nums[j];
+                nums[j] = nums[j + 1];
+                nums[j + 1] = tmp;
+                count += 3; // 元素交换包含 3 个单元操作
+            }
+        }
+    }
+    return count;
+}
 ```
 
 ### 指数阶 $O(2^n)$
@@ -1122,16 +1170,38 @@ $$
 
 下图和以下代码模拟了细胞分裂的过程，时间复杂度为 $O(2^n)$ ：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{exponential}
+```cpp
+/* 平方阶（冒泡排序） */
+int bubbleSort(vector<int> &nums) {
+    int count = 0; // 计数器
+    // 外循环：未排序区间为 [0, i]
+    for (int i = nums.size() - 1; i > 0; i--) {
+        // 内循环：将未排序区间 [0, i] 中的最大元素交换至该区间的最右端
+        for (int j = 0; j < i; j++) {
+            if (nums[j] > nums[j + 1]) {
+                // 交换 nums[j] 与 nums[j + 1]
+                int tmp = nums[j];
+                nums[j] = nums[j + 1];
+                nums[j + 1] = tmp;
+                count += 3; // 元素交换包含 3 个单元操作
+            }
+        }
+    }
+    return count;
+}
 ```
 
 ![指数阶的时间复杂度](time_complexity.assets/time_complexity_exponential.png)
 
 在实际算法中，指数阶常出现于递归函数中。例如在以下代码中，其递归地一分为二，经过 $n$ 次分裂后停止：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{exp_recur}
+```cpp
+/* 指数阶（递归实现） */
+int expRecur(int n) {
+    if (n == 1)
+        return 1;
+    return expRecur(n - 1) + expRecur(n - 1) + 1;
+}
 ```
 
 指数阶增长非常迅速，在穷举法（暴力搜索、回溯等）中比较常见。对于数据规模较大的问题，指数阶是不可接受的，通常需要使用动态规划或贪心算法等来解决。
@@ -1142,16 +1212,29 @@ $$
 
 下图和以下代码模拟了“每轮缩减到一半”的过程，时间复杂度为 $O(\log_2 n)$ ，简记为 $O(\log n)$ ：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{logarithmic}
+```cpp
+/* 对数阶（循环实现） */
+int logarithmic(int n) {
+    int count = 0;
+    while (n > 1) {
+        n = n / 2;
+        count++;
+    }
+    return count;
+}
 ```
 
 ![对数阶的时间复杂度](time_complexity.assets/time_complexity_logarithmic.png)
 
 与指数阶类似，对数阶也常出现于递归函数中。以下代码形成了一棵高度为 $\log_2 n$ 的递归树：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{log_recur}
+```cpp
+/* 对数阶（递归实现） */
+int logRecur(int n) {
+    if (n <= 1)
+        return 0;
+    return logRecur(n / 2) + 1;
+}
 ```
 
 对数阶常出现于基于分治策略的算法中，体现了“一分为多”和“化繁为简”的算法思想。它增长缓慢，是仅次于常数阶的理想的时间复杂度。
@@ -1170,8 +1253,17 @@ $$
 
 线性对数阶常出现于嵌套循环中，两层循环的时间复杂度分别为 $O(\log n)$ 和 $O(n)$ 。相关代码如下：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{linear_log_recur}
+```cpp
+/* 线性对数阶 */
+int linearLogRecur(int n) {
+    if (n <= 1)
+        return 1;
+    int count = linearLogRecur(n / 2) + linearLogRecur(n / 2);
+    for (int i = 0; i < n; i++) {
+        count++;
+    }
+    return count;
+}
 ```
 
 下图展示了线性对数阶的生成方式。二叉树的每一层的操作总数都为 $n$ ，树共有 $\log_2 n + 1$ 层，因此时间复杂度为 $O(n \log n)$ 。
@@ -1190,8 +1282,18 @@ $$
 
 阶乘通常使用递归实现。如下图和以下代码所示，第一层分裂出 $n$ 个，第二层分裂出 $n - 1$ 个，以此类推，直至第 $n$ 层时停止分裂：
 
-```src
-[file]{time_complexity}-[class]{}-[func]{factorial_recur}
+```cpp
+/* 阶乘阶（递归实现） */
+int factorialRecur(int n) {
+    if (n == 0)
+        return 1;
+    int count = 0;
+    // 从 1 个分裂出 n 个
+    for (int i = 0; i < n; i++) {
+        count += factorialRecur(n - 1);
+    }
+    return count;
+}
 ```
 
 ![阶乘阶的时间复杂度](time_complexity.assets/time_complexity_factorial.png)
@@ -1207,8 +1309,31 @@ $$
 
 “最差时间复杂度”对应函数渐近上界，使用大 $O$ 记号表示。相应地，“最佳时间复杂度”对应函数渐近下界，用 $\Omega$ 记号表示：
 
-```src
-[file]{worst_best_time_complexity}-[class]{}-[func]{find_one}
+```cpp
+/* 生成一个数组，元素为 { 1, 2, ..., n }，顺序被打乱 */
+vector<int> randomNumbers(int n) {
+    vector<int> nums(n);
+    // 生成数组 nums = { 1, 2, 3, ..., n }
+    for (int i = 0; i < n; i++) {
+        nums[i] = i + 1;
+    }
+    // 使用系统时间生成随机种子
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    // 随机打乱数组元素
+    shuffle(nums.begin(), nums.end(), default_random_engine(seed));
+    return nums;
+}
+
+/* 查找数组 nums 中数字 1 所在索引 */
+int findOne(vector<int> &nums) {
+    for (int i = 0; i < nums.size(); i++) {
+        // 当元素 1 在数组头部时，达到最佳时间复杂度 O(1)
+        // 当元素 1 在数组尾部时，达到最差时间复杂度 O(n)
+        if (nums[i] == 1)
+            return i;
+    }
+    return -1;
+}
 ```
 
 值得说明的是，我们在实际中很少使用最佳时间复杂度，因为通常只有在很小概率下才能达到，可能会带来一定的误导性。**而最差时间复杂度更为实用，因为它给出了一个效率安全值**，让我们可以放心地使用算法。
