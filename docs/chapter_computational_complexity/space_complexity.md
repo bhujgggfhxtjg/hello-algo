@@ -837,22 +837,63 @@ $$
 
 需要注意的是，在循环中初始化变量或调用函数而占用的内存，在进入下一循环后就会被释放，因此不会累积占用空间，空间复杂度仍为 $O(1)$ ：
 
-```src
-[file]{space_complexity}-[class]{}-[func]{constant}
+```cpp
+/* 函数 */
+int func() {
+    // 执行某些操作
+    return 0;
+}
+
+/* 常数阶 */
+void constant(int n) {
+    // 常量、变量、对象占用 O(1) 空间
+    const int a = 0;
+    int b = 0;
+    vector<int> nums(10000);
+    ListNode node(0);
+    // 循环中的变量占用 O(1) 空间
+    for (int i = 0; i < n; i++) {
+        int c = 0;
+    }
+    // 循环中的函数占用 O(1) 空间
+    for (int i = 0; i < n; i++) {
+        func();
+    }
+}
 ```
 
 ### 线性阶 $O(n)$
 
 线性阶常见于元素数量与 $n$ 成正比的数组、链表、栈、队列等：
 
-```src
-[file]{space_complexity}-[class]{}-[func]{linear}
+```cpp
+/* 线性阶 */
+void linear(int n) {
+    // 长度为 n 的数组占用 O(n) 空间
+    vector<int> nums(n);
+    // 长度为 n 的列表占用 O(n) 空间
+    vector<ListNode> nodes;
+    for (int i = 0; i < n; i++) {
+        nodes.push_back(ListNode(i));
+    }
+    // 长度为 n 的哈希表占用 O(n) 空间
+    unordered_map<int, string> map;
+    for (int i = 0; i < n; i++) {
+        map[i] = to_string(i);
+    }
+}
 ```
 
 如下图所示，此函数的递归深度为 $n$ ，即同时存在 $n$ 个未返回的 `linear_recur()` 函数，使用 $O(n)$ 大小的栈帧空间：
 
-```src
-[file]{space_complexity}-[class]{}-[func]{linear_recur}
+```cpp
+/* 线性阶（递归实现） */
+void linearRecur(int n) {
+    cout << "递归 n = " << n << endl;
+    if (n == 1)
+        return;
+    linearRecur(n - 1);
+}
 ```
 
 ![递归函数产生的线性阶空间复杂度](space_complexity.assets/space_complexity_recursive_linear.png)
@@ -861,14 +902,32 @@ $$
 
 平方阶常见于矩阵和图，元素数量与 $n$ 成平方关系：
 
-```src
-[file]{space_complexity}-[class]{}-[func]{quadratic}
+```cpp
+/* 平方阶 */
+void quadratic(int n) {
+    // 二维列表占用 O(n^2) 空间
+    vector<vector<int>> numMatrix;
+    for (int i = 0; i < n; i++) {
+        vector<int> tmp;
+        for (int j = 0; j < n; j++) {
+            tmp.push_back(0);
+        }
+        numMatrix.push_back(tmp);
+    }
+}
 ```
 
 如下图所示，该函数的递归深度为 $n$ ，在每个递归函数中都初始化了一个数组，长度分别为 $n$、$n-1$、$\dots$、$2$、$1$ ，平均长度为 $n / 2$ ，因此总体占用 $O(n^2)$ 空间：
 
-```src
-[file]{space_complexity}-[class]{}-[func]{quadratic_recur}
+```cpp
+/* 平方阶（递归实现） */
+int quadraticRecur(int n) {
+    if (n <= 0)
+        return 0;
+    vector<int> nums(n);
+    cout << "递归 n = " << n << " 中的 nums 长度 = " << nums.size() << endl;
+    return quadraticRecur(n - 1);
+}
 ```
 
 ![递归函数产生的平方阶空间复杂度](space_complexity.assets/space_complexity_recursive_quadratic.png)
@@ -877,8 +936,16 @@ $$
 
 指数阶常见于二叉树。观察下图，层数为 $n$ 的“满二叉树”的节点数量为 $2^n - 1$ ，占用 $O(2^n)$ 空间：
 
-```src
-[file]{space_complexity}-[class]{}-[func]{build_tree}
+```cpp
+/* 指数阶（建立满二叉树） */
+TreeNode *buildTree(int n) {
+    if (n == 0)
+        return nullptr;
+    TreeNode *root = new TreeNode(0);
+    root->left = buildTree(n - 1);
+    root->right = buildTree(n - 1);
+    return root;
+}
 ```
 
 ![满二叉树产生的指数阶空间复杂度](space_complexity.assets/space_complexity_exponential.png)
