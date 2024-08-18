@@ -148,8 +148,16 @@
 
 在数组中访问元素非常高效，我们可以在 $O(1)$ 时间内随机访问数组中的任意一个元素。
 
-```src
-[file]{array}-[class]{}-[func]{random_access}
+=== "C++"
+```cpp
+/* 随机访问元素 */
+int randomAccess(int *nums, int size) {
+    // 在区间 [0, size) 中随机抽取一个数字
+    int randomIndex = rand() % size;
+    // 获取并返回随机元素
+    int randomNum = nums[randomIndex];
+    return randomNum;
+}
 ```
 
 ### 插入元素
@@ -160,8 +168,17 @@
 
 值得注意的是，由于数组的长度是固定的，因此插入一个元素必定会导致数组尾部元素“丢失”。我们将这个问题的解决方案留在“列表”章节中讨论。
 
-```src
-[file]{array}-[class]{}-[func]{insert}
+=== "C++"
+```cpp
+/* 在数组的索引 index 处插入元素 num */
+void insert(int *nums, int size, int num, int index) {
+    // 把索引 index 以及之后的所有元素向后移动一位
+    for (int i = size - 1; i > index; i--) {
+        nums[i] = nums[i - 1];
+    }
+    // 将 num 赋给 index 处的元素
+    nums[index] = num;
+}
 ```
 
 ### 删除元素
@@ -172,8 +189,15 @@
 
 请注意，删除元素完成后，原先末尾的元素变得“无意义”了，所以我们无须特意去修改它。
 
-```src
-[file]{array}-[class]{}-[func]{remove}
+=== "C++"
+```cpp
+/* 删除索引 index 处的元素 */
+void remove(int *nums, int size, int index) {
+    // 把索引 index 之后的所有元素向前移动一位
+    for (int i = index; i < size - 1; i++) {
+        nums[i] = nums[i + 1];
+    }
+}
 ```
 
 总的来看，数组的插入与删除操作有以下缺点。
@@ -186,8 +210,16 @@
 
 在大多数编程语言中，我们既可以通过索引遍历数组，也可以直接遍历获取数组中的每个元素：
 
-```src
-[file]{array}-[class]{}-[func]{traverse}
+=== "C++"
+```cpp
+/* 遍历数组 */
+void traverse(int *nums, int size) {
+    int count = 0;
+    // 通过索引遍历数组
+    for (int i = 0; i < size; i++) {
+        count += nums[i];
+    }
+}
 ```
 
 ### 查找元素
@@ -196,8 +228,15 @@
 
 因为数组是线性数据结构，所以上述查找操作被称为“线性查找”。
 
-```src
-[file]{array}-[class]{}-[func]{find}
+```cpp
+/* 在数组中查找指定元素 */
+int find(int *nums, int size, int target) {
+    for (int i = 0; i < size; i++) {
+        if (nums[i] == target)
+            return i;
+    }
+    return -1;
+}
 ```
 
 ### 扩容数组
@@ -206,8 +245,20 @@
 
 如果我们希望扩容数组，则需重新建立一个更大的数组，然后把原数组元素依次复制到新数组。这是一个 $O(n)$ 的操作，在数组很大的情况下非常耗时。代码如下所示：
 
-```src
-[file]{array}-[class]{}-[func]{extend}
+```cpp
+/* 扩展数组长度 */
+int *extend(int *nums, int size, int enlarge) {
+    // 初始化一个扩展长度后的数组
+    int *res = new int[size + enlarge];
+    // 将原数组中的所有元素复制到新数组
+    for (int i = 0; i < size; i++) {
+        res[i] = nums[i];
+    }
+    // 释放内存
+    delete[] nums;
+    // 返回扩展后的新数组
+    return res;
+}
 ```
 
 ## 数组的优点与局限性
