@@ -75,8 +75,39 @@
 
 在上一题的代码的基础上，我们考虑在每一轮选择中开启一个哈希集合 `duplicated` ，用于记录该轮中已经尝试过的元素，并将重复元素剪枝：
 
-```src
-[file]{permutations_ii}-[class]{}-[func]{permutations_ii}
+```cpp
+/* 回溯算法：全排列 I */
+void backtrack(vector<int> &state, const vector<int> &choices, vector<bool> &selected, vector<vector<int>> &res) {
+    // 当状态长度等于元素数量时，记录解
+    if (state.size() == choices.size()) {
+        res.push_back(state);
+        return;
+    }
+    // 遍历所有选择
+    for (int i = 0; i < choices.size(); i++) {
+        int choice = choices[i];
+        // 剪枝：不允许重复选择元素
+        if (!selected[i]) {
+            // 尝试：做出选择，更新状态
+            selected[i] = true;
+            state.push_back(choice);
+            // 进行下一轮选择
+            backtrack(state, choices, selected, res);
+            // 回退：撤销选择，恢复到之前的状态
+            selected[i] = false;
+            state.pop_back();
+        }
+    }
+}
+
+/* 全排列 I */
+vector<vector<int>> permutationsI(vector<int> nums) {
+    vector<int> state;
+    vector<bool> selected(nums.size(), false);
+    vector<vector<int>> res;
+    backtrack(state, nums, selected, res);
+    return res;
+}
 ```
 
 假设元素两两之间互不相同，则 $n$ 个元素共有 $n!$  种排列（阶乘）；在记录结果时，需要复制长度为 $n$ 的列表，使用 $O(n)$ 时间。**因此时间复杂度为 $O(n!n)$** 。
