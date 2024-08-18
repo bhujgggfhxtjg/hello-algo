@@ -10,8 +10,19 @@
 
 对于此题，我们前序遍历这棵树，并判断当前节点的值是否为 $7$ ，若是，则将该节点的值加入结果列表 `res` 之中。相关过程实现如下图和以下代码所示：
 
-```src
-[file]{preorder_traversal_i_compact}-[class]{}-[func]{pre_order}
+```cpp
+/* 前序遍历：例题一 */
+void preOrder(TreeNode *root) {
+    if (root == nullptr) {
+        return;
+    }
+    if (root->val == 7) {
+        // 记录解
+        res.push_back(root);
+    }
+    preOrder(root->left);
+    preOrder(root->right);
+}
 ```
 
 ![在前序遍历中搜索节点](backtracking_algorithm.assets/preorder_find_nodes.png)
@@ -30,8 +41,23 @@
 
 在例题一代码的基础上，我们需要借助一个列表 `path` 记录访问过的节点路径。当访问到值为 $7$ 的节点时，则复制 `path` 并添加进结果列表 `res` 。遍历完成后，`res` 中保存的就是所有的解。代码如下所示：
 
-```src
-[file]{preorder_traversal_ii_compact}-[class]{}-[func]{pre_order}
+```cpp
+/* 前序遍历：例题二 */
+void preOrder(TreeNode *root) {
+    if (root == nullptr) {
+        return;
+    }
+    // 尝试
+    path.push_back(root);
+    if (root->val == 7) {
+        // 记录解
+        res.push_back(path);
+    }
+    preOrder(root->left);
+    preOrder(root->right);
+    // 回退
+    path.pop_back();
+}
 ```
 
 在每次“尝试”中，我们通过将当前节点添加进 `path` 来记录路径；而在“回退”前，我们需要将该节点从 `path` 中弹出，**以恢复本次尝试之前的状态**。
@@ -437,8 +463,53 @@
 
 接下来，我们基于框架代码来解决例题三。状态 `state` 为节点遍历路径，选择 `choices` 为当前节点的左子节点和右子节点，结果 `res` 是路径列表：
 
-```src
-[file]{preorder_traversal_iii_template}-[class]{}-[func]{backtrack}
+```cpp
+/* 判断当前状态是否为解 */
+bool isSolution(vector<TreeNode *> &state) {
+    return !state.empty() && state.back()->val == 7;
+}
+
+/* 记录解 */
+void recordSolution(vector<TreeNode *> &state, vector<vector<TreeNode *>> &res) {
+    res.push_back(state);
+}
+
+/* 判断在当前状态下，该选择是否合法 */
+bool isValid(vector<TreeNode *> &state, TreeNode *choice) {
+    return choice != nullptr && choice->val != 3;
+}
+
+/* 更新状态 */
+void makeChoice(vector<TreeNode *> &state, TreeNode *choice) {
+    state.push_back(choice);
+}
+
+/* 恢复状态 */
+void undoChoice(vector<TreeNode *> &state, TreeNode *choice) {
+    state.pop_back();
+}
+
+/* 回溯算法：例题三 */
+void backtrack(vector<TreeNode *> &state, vector<TreeNode *> &choices, vector<vector<TreeNode *>> &res) {
+    // 检查是否为解
+    if (isSolution(state)) {
+        // 记录解
+        recordSolution(state, res);
+    }
+    // 遍历所有选择
+    for (TreeNode *choice : choices) {
+        // 剪枝：检查选择是否合法
+        if (isValid(state, choice)) {
+            // 尝试：做出选择，更新状态
+            makeChoice(state, choice);
+            // 进行下一轮选择
+            vector<TreeNode *> nextChoices{choice->left, choice->right};
+            backtrack(state, nextChoices, res);
+            // 回退：撤销选择，恢复到之前的状态
+            undoChoice(state, choice);
+        }
+    }
+}
 ```
 
 根据题意，我们在找到值为 $7$ 的节点后应该继续搜索，**因此需要将记录解之后的 `return` 语句删除**。下图对比了保留或删除 `return` 语句的搜索过程。
